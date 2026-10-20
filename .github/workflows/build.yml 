@@ -12,9 +12,11 @@ steps:
       distribution: temurin
       java-version: "17"
 
-  - name: Preparar Android SDK
-    shell: bash
-    run: |
+  
+    - name: Preparar Android SDK
+      uses: android-actions/setup-android@v4
+      with:
+        packages: 'platforms;android-35 build-tools;35.0.0 platform-tools'
       set -e
       echo "ANDROID_HOME=$ANDROID_HOME"
       SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
