@@ -11,25 +11,14 @@ steps:
     with:
       distribution: temurin
       java-version: "17"
-
-  
-    - name: Preparar Android SDK
-      uses: android-actions/setup-android@v4
-      with:
-        packages: 'platforms;android-35 build-tools;35.0.0 platform-tools'
-      set -e
-      echo "ANDROID_HOME=$ANDROID_HOME"
-      SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
-      if [ -z "$SDKMANAGER" ]; then
-        echo "ERROR: No se encontró sdkmanager en $ANDROID_HOME"
-        exit 1
-      fi
-      echo "Usando: $SDKMANAGER"
-      yes | "$SDKMANAGER" --licenses
-      "$SDKMANAGER" --install \
-        "platforms;android-35" \
-        "build-tools;35.0.0" \
-        "platform-tools"
+ 
+  - name: Preparar Android SDK
+    uses: android-actions/setup-android@v4
+    with:
+      packages: |
+        platforms;android-35
+        build-tools;35.0.0
+        platform-tools
 
   - name: Configurar Gradle
     uses: gradle/actions/setup-gradle@v4
