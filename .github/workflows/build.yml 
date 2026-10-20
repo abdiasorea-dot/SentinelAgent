@@ -1,13 +1,6 @@
-name: Build Sentinel Agent APK
-
-on:
-workflow_dispatch:
-push:
-branches: [main]
-
-jobs:
-build:
-runs-on: ubuntu-latest
+env:
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
 steps:
   - name: Descargar el repositorio
@@ -19,10 +12,22 @@ steps:
       distribution: temurin
       java-version: "17"
 
-  - name: Configurar Android SDK
-    uses: android-actions/setup-android@v3
-    with:
-      packages: 'platforms;android-35,build-tools;35.0.0'
+  - name: Preparar Android SDK
+    shell: bash
+    run: |
+      set -e
+      echo "ANDROID_HOME=$ANDROID_HOME"
+      SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+      if [ -z "$SDKMANAGER" ]; then
+        echo "ERROR: No se encontró sdkmanager en $ANDROID_HOME"
+        exit 1
+      fi
+      echo "Usando: $SDKMANAGER"
+      yes | "$SDKMANAGER" --licenses
+      "$SDKMANAGER" --install \
+        "platforms;android-35" \
+        "build-tools;35.0.0" \
+        "platform-tools"
 
   - name: Configurar Gradle
     uses: gradle/actions/setup-gradle@v4
